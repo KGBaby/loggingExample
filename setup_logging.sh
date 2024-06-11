@@ -7,44 +7,46 @@ if [ -z "$DATADOG_API_KEY" ]; then
 fi
 
 # Step 1: Create the Python Script
+# Step 1: Create the Python Script
 sudo bash -c 'cat << EOF > /usr/local/bin/generate_log.py
-import xml.etree.ElementTree as ET
-from xml.dom.minidom import parseString
+import json
 from datetime import datetime
 import random
 import time
 
-def prettify_xml(element):
-    """Return a pretty-printed XML string for the Element."""
-    rough_string = ET.tostring(element, "utf-8")
-    reparsed = parseString(rough_string)
-    return reparsed.toprettyxml(indent="  ")
+def generate_random_ip():
+    """Generate a random IP address."""
+    return ".".join(str(random.randint(0, 255)) for _ in range(4))
 
 def generate_log_entry():
-    """Generate a single XML log entry."""
-    entry = ET.Element("LogEntry")
-    timestamp = ET.SubElement(entry, "Timestamp")
-    timestamp.text = datetime.now().isoformat()
-    message = ET.SubElement(entry, "Message")
-    message.text = "Sample log message"
-    user_id = ET.SubElement(entry, "UserID")
-    user_id.text = str(random.randint(1000, 9999))
-    error_code = ET.SubElement(entry, "ErrorCode")
-    error_code.text = str(random.randint(1, 100))
-    return entry
+    """Generate a single JSON log entry."""
+    log_entry = {
+        "Timestamp": datetime.now().isoformat(),
+        "Message": "Sample log message",
+        "UserID": random.randint(1000, 9999),
+        "ErrorCode": random.randint(1, 100),
+        "Status": random.choice(["error", "info"]),
+        "Network": {
+            "Client": {
+                "IP": generate_random_ip()
+            }
+        }
+    }
+    return log_entry
 
-def continuously_generate_xml_log():
-    """Continuously generate and append XML log entries to a file."""
-    file_path = "/var/log/continuous_xml_log.xml"
+def continuously_generate_json_log():
+    """Continuously generate and append JSON log entries to a file."""
+    file_path = "/var/log/continuous_json_log.json"
     while True:
         entry = generate_log_entry()
         with open(file_path, "a") as file:
-            file.write(prettify_xml(entry))
+            file.write(json.dumps(entry, indent=2) + "\n")
         time.sleep(1)  # Pause for 1 second before the next log entry
 
 # Run the continuous log generation
-continuously_generate_xml_log()
+continuously_generate_json_log()
 EOF'
+
 
 # Make the Python script executable
 sudo chmod +x /usr/local/bin/generate_log.py
