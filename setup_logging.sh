@@ -54,7 +54,7 @@ sudo chmod +x /usr/local/bin/generate_log.py
 # Step 2: Create a Systemd Service
 sudo bash -c 'cat << EOF > /etc/systemd/system/generate_log.service
 [Unit]
-Description=Generate XML Logs Continuously
+Description=Generate JSON Logs Continuously
 
 [Service]
 ExecStart=/usr/bin/python3 /usr/local/bin/generate_log.py
@@ -78,7 +78,7 @@ sudo mkdir -p /etc/datadog-agent/conf.d/custom_log.d
 sudo bash -c 'cat << EOF > /etc/datadog-agent/conf.d/custom_log.d/conf.yaml
 logs:
   - type: file
-    path: /var/log/continuous_xml_log.xml
+    path: /var/log/continuous_json_log.json
     service: custom_service
     source: python
 EOF'
