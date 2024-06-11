@@ -81,14 +81,14 @@ logs:
     path: /var/log/continuous_json_log.json
     service: custom_service
     source: mysource
-    log_processing_rules:
-      - type: multi_line
-        name: log_starts_with_timestamp
-        pattern: "^\\{"
 EOF'
 
 # Ensure Datadog Agent log collection is enabled
 sudo sed -i 's/^# logs_enabled: false/logs_enabled: true/' /etc/datadog-agent/datadog.yaml
+
+# Enable auto_multi_line_detection in datadog.yaml
+sudo sed -i 's/# logs_config:/logs_config:/g' /etc/datadog-agent/datadog.yaml
+sudo sed -i '/logs_config:/a\\  auto_multi_line_detection: true' /etc/datadog-agent/datadog.yaml
 
 # Restart Datadog Agent to apply changes
 sudo systemctl restart datadog-agent
