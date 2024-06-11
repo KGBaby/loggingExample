@@ -32,7 +32,7 @@ def generate_log_entry():
         "Message": "Sample log message",
         "UserID": random.randint(1000, 9999),
         "ErrorCode": random.randint(1, 100),
-        "Status": random.choice(["error", "info"]),
+        "levelname": random.choice(["ERROR", "INFO"]),
         "Network": {
             "Client": {
                 "IP": generate_random_ip()
