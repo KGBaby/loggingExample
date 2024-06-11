@@ -87,7 +87,7 @@ logs:
   - type: file
     path: /var/log/continuous_json_log.json
     service: custom_service
-    source: mysource
+    source: python
 EOF'
 
 # Ensure Datadog Agent log collection is enabled
