@@ -80,6 +80,11 @@ logs:
   - type: file
     path: /var/log/continuous_json_log.json
     service: custom_service
+    source: mysource
+    log_processing_rules:
+      - type: multi_line
+        name: log_starts_with_timestamp
+        pattern: "^\\{"
 EOF'
 
 # Ensure Datadog Agent log collection is enabled
