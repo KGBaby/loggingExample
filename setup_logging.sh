@@ -88,10 +88,6 @@ logs:
     path: /var/log/continuous_json_log.json
     service: custom_service
     source: mysource
-    log_processing_rules:
-      - type: multi_line
-        name: log_starts_with_timestamp
-        pattern: "^\{\\\"Timestamp\\\": \\\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}\\\""
 EOF'
 
 # Ensure Datadog Agent log collection is enabled
