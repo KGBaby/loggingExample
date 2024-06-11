@@ -15,8 +15,15 @@ import random
 import time
 
 def generate_random_ip():
-    """Generate a random IP address."""
-    return ".".join(str(random.randint(0, 255)) for _ in range(4))
+    """Select a random public IP address from a predefined list."""
+    ip_list = [
+        "151.101.1.69", "104.244.42.1", "172.217.16.1", "151.101.65.69", "104.244.42.2",
+        "172.217.17.1", "151.101.129.69", "104.244.42.3", "172.217.18.1", "151.101.193.69",
+        "104.244.42.4", "172.217.19.1", "151.101.1.70", "104.244.42.5", "172.217.20.1",
+        "151.101.65.70", "104.244.42.6", "172.217.21.1", "151.101.129.70", "104.244.42.7",
+        "172.217.22.1", "151.101.193.70", "104.244.42.8", "172.217.23.1", "151.101.1.71"
+    ]
+    return random.choice(ip_list)
 
 def generate_log_entry():
     """Generate a single JSON log entry."""
@@ -40,7 +47,7 @@ def continuously_generate_json_log():
     while True:
         entry = generate_log_entry()
         with open(file_path, "a") as file:
-            file.write(json.dumps(entry, indent=2) + "\n")
+            file.write(json.dumps(entry) + "\n")
         time.sleep(1)  # Pause for 1 second before the next log entry
 
 # Run the continuous log generation
@@ -81,14 +88,14 @@ logs:
     path: /var/log/continuous_json_log.json
     service: custom_service
     source: mysource
+    log_processing_rules:
+      - type: multi_line
+        name: log_starts_with_timestamp
+        pattern: "^\{\\\"Timestamp\\\": \\\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}\\\""
 EOF'
 
 # Ensure Datadog Agent log collection is enabled
 sudo sed -i 's/^# logs_enabled: false/logs_enabled: true/' /etc/datadog-agent/datadog.yaml
-
-# Enable auto_multi_line_detection in datadog.yaml
-sudo sed -i 's/# logs_config:/logs_config:/g' /etc/datadog-agent/datadog.yaml
-sudo sed -i '/logs_config:/a\\  auto_multi_line_detection: true' /etc/datadog-agent/datadog.yaml
 
 # Restart Datadog Agent to apply changes
 sudo systemctl restart datadog-agent
